@@ -7,7 +7,7 @@ true_w = [2, -3.4]
 true_b = 4.2
 
 # 设训练数据集样本size为1000*2, 即X1, X2, 均值为0，标准差为1的正态分布
-features = nd.random.normal(scale = 1, shape = (num_examples, num_inputs))
+features = nd.random.normal(scale = 1, shape = (num_examples, num_inputs)) # 1000, 2
 
 # leables --- Y = w1 * x1 + w2 * x2 + b
 labels = true_w[0] * features[:, 0] + true_w[1] * features[:, 1] + true_b
@@ -16,7 +16,7 @@ labels = true_w[0] * features[:, 0] + true_w[1] * features[:, 1] + true_b
 labels += nd.random.normal(scale = 0.01, shape = labels.shape)
 
 # data_iter 从features-labels中选出batch_size大小的小批量数据
-# 它每次返回batch_size（批量大小）个随机样本的特征和标签。
+# 它每次返回batch_size(批量大小), 这里是 10*2 规模的随机样本的特征和标签。
 def data_iter(batch_size, features, labels):
     num_examples = len(features)
     indices = list(range(num_examples))
@@ -56,6 +56,7 @@ num_epochs = 3  #迭代次数
 
 for epoch in range(num_epochs): 
     n = 0
+    # 这个循环会执行100次, 如果batch_size = 100, 那么这个循环会执行10次
     for X,y in data_iter(batch_size, features, labels): #先将mini-batch数据取出
         n = n + 1
         print(n)

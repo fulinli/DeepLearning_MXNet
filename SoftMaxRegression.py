@@ -50,6 +50,7 @@ def net(X):
 
 # 计算分类准确性
 def accuracy(y_hat, y):
+    # y_hat.argmax(axis=1)返回矩阵y_hat每行中最大元素的索引
     return (y_hat.argmax(axis = 1) == y.astype('float32')).mean().asscalar()
 
 def evaluate_accuracy(data_iter, net):
@@ -67,6 +68,7 @@ def train_ch3(net, train_iter, test_iter, loss, num_epochs, batch_size,
     for epoch in range(num_epochs):
         train_l_sum = 0
         train_acc_sum = 0
+        # 这个循环执行 60000 / 256 次
         for X, y in train_iter:
             with autograd.record():
                 y_hat = net(X)

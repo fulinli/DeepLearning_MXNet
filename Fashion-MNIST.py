@@ -8,6 +8,7 @@ import matplotlib.pyplot as plt
 mnist_train = gdata.vision.FashionMNIST(train=True)
 mnist_test = gdata.vision.FashionMNIST(train=False)
 
+# 训练集和测试集中每个类别的图像分别为6000, 1000, 因此len(mnist_train)=60000, len(mnist_test) = 10000
 print(len(mnist_train), len(mnist_test))
 
 # feature 对应高和宽均为28像素的图像, 每个像素的数值为0-255之间的8位无符号整数(unit8). 使用三维NDArray存储
@@ -63,9 +64,14 @@ else:
 train_iter = gdata.DataLoader(mnist_train.transform_first(transformer), 
                               batch_size, shuffle=True, 
                               num_workers=num_workers)
-print(train_iter)
+# print(train_iter)
 
 test_iter = gdata.DataLoader(mnist_test.transform_first(transformer), 
                             batch_size, shuffle=False, 
                             num_workers=num_workers)
-print(test_iter)
+# print(test_iter)
+
+start = time.time()
+for X, y in train_iter:
+    continue
+print('%.2f sec' % (time.time() - start))
