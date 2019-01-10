@@ -48,6 +48,7 @@ def squared_loss(y_hat, y):
 # 定义优化算法
 def sgd(params, lr, batch_size):
     for param in params:
+        # 用param[:] 而不是 param 
         param[:] = param - lr * param.grad / batch_size
 
 # 训练模型
@@ -59,12 +60,12 @@ for epoch in range(num_epochs):
     # 这个循环会执行100次, 如果batch_size = 100, 那么这个循环会执行10次
     for X,y in data_iter(batch_size, features, labels): #先将mini-batch数据取出
         n = n + 1
-        print(n)
+        # print(n)
         with autograd.record():
             # 计算损失函数
             loss_function = squared_loss(linreg(X, w, b), y)
-            # 由于我们之前设批量大小batch_size为 10，每个小批量的loss_function的形状为（10，1）
-            # 由于变量loss_function并不是一个标量，运行loss_function.backward()将对loss_function中元素求和得到新的变量，再求该变量有关模型参数的梯度
+            # 由于我们之前设批量大小batch_size为 10, 每个小批量的loss_function的形状为(10, 1)
+            # 由于变量loss_function并不是一个标量, 运行loss_function.backward()将对loss_function中元素求和得到新的变量, 再求该变量有关模型参数的梯度
         #计算损失函数梯度
         loss_function.backward()
         #更新w, b

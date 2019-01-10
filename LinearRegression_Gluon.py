@@ -36,12 +36,12 @@ net.initialize(init.Normal(sigma=0.01))
 # 定义损失函数
 from mxnet.gluon import loss as gloss
 # loss模块中定义了各种损失函数
-loss = gloss.L2Loss() # 平方损失又称 L2 范数损失
+loss = gloss.L2Loss() # 平方损失又称L2范数损失
 
 
 # 定义优化算法
 from mxnet import gluon
-# 创建一个Trainer实例，并指定学习率为 0.03 的小批量随机梯度下降（sgd）为优化算法。
+# 创建一个Trainer实例，并指定学习率为 0.03 的小批量随机梯度下降(sgd)为优化算法。
 # 该优化算法将用来迭代net实例所有通过add函数嵌套的层所包含的全部参数。这些参数可以通过collect_params函数获取。
 trainer = gluon.Trainer(net.collect_params(), 'sgd', {'learning_rate': 0.03})
 

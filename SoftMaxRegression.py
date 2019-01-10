@@ -1,10 +1,16 @@
 import gluonbook as gb
+from mxnet.gluon import data as gdata
 from mxnet import autograd, nd
 from matplotlib import pyplot as plt
 
 # 获取和读取数据
 batch_size = 256
-train_iter, test_iter = gb.load_data_fashion_mnist(batch_size)
+transformer = gdata.vision.transforms.ToTensor()
+mnist_train = gdata.vision.FashionMNIST(train=True).transform_first(transformer)
+mnist_test = gdata.vision.FashionMNIST(train=False).transform_first(transformer)
+
+train_iter = gdata.DataLoader(mnist_train, batch_size, shuffle=True)
+test_iter = gdata.DataLoader(mnist_test, batch_size, shuffle=True)
 
 # 初始化模型参数
 num_inputs = 784
@@ -60,6 +66,10 @@ def evaluate_accuracy(data_iter, net):
     return acc / len(data_iter)
 
 
+def sgd(params, lr, batch_size):
+    for param in params:
+        param[:] = param - lr * param.grad / batch_size
+
 # 训练模型
 num_epochs, lr = 5, 0.1
 
@@ -75,7 +85,7 @@ def train_ch3(net, train_iter, test_iter, loss, num_epochs, batch_size,
                 l = loss(y_hat, y)
             l.backward()
             if trainer is None:
-                gb.sgd(params, lr, batch_size)
+                sgd(params, lr, batch_size)
             else:
                 trainer.step(batch_size)
             train_l_sum += l.mean().asscalar()
