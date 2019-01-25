@@ -1,5 +1,5 @@
 from matplotlib import pyplot as plt
-import gluonbook as gb
+#import gluonbook as gb
 from mxnet import autograd, gluon, nd
 from mxnet.gluon import data as gdata, loss as gloss, nn
 
