@@ -84,13 +84,22 @@ def train(net, train_features, train_labels, test_features, test_labels,
             test_ls.append(log_rmse(net, test_features, test_labels))
     return train_ls, test_ls
 
+
+# K折交叉验证-它返回第i折交叉验证时所需要的训练和验证数据
 def get_k_fold_data(k, i, X, y):
     assert k > 1
-    fold_size = X.shape[0] // k
+    fold_size = X.shape[0] // k  # // 为整除
     X_train, y_train = None, None
     for j in range(k):
         idx = slice(j * fold_size, (j + 1) * fold_size)
+        # print(idx)
+        # slice(0, 292, None)
+        # slice(292, 584, None)
+        # slice(584, 876, None)
+        # slice(876, 1168, None)
+        # slice(1168, 1460, None)
         X_part, y_part = X[idx, :], y[idx]
+        # X_part.shape = (292, 331) y_part.shape = (292, 1)
         if j == i:
             X_valid, y_valid = X_part, y_part
         elif X_train is None:
@@ -99,13 +108,14 @@ def get_k_fold_data(k, i, X, y):
             X_train = nd.concat(X_train, X_part, dim=0)
             y_train = nd.concat(y_train, y_part, dim=0)
     return X_train, y_train, X_valid, y_valid
-
+# 在K折交叉验证中我们训练 K 次并返回训练和验证的平均误差。
 def k_fold(k, X_train, y_train, num_epochs,
            learning_rate, weight_decay, batch_size):
     train_l_sum, valid_l_sum = 0, 0
     for i in range(k):
         data = get_k_fold_data(k, i, X_train, y_train)
         net = get_net()
+        # *data是用来接受任意多个参数并将其放在一个元组中。
         train_ls, valid_ls = train(net, *data, num_epochs, learning_rate,
                                    weight_decay, batch_size)
         train_l_sum += train_ls[-1]
@@ -126,3 +136,22 @@ train_l, valid_l = k_fold(k, train_features, train_labels, num_epochs, lr,
                           weight_decay, batch_size)
 print('%d-fold validation: avg train rmse: %f, avg valid rmse: %f'
       % (k, train_l, valid_l))
+
+def train_and_pred(train_features, test_feature, train_labels, test_data,
+                   num_epochs, lr, weight_decay, batch_size):
+    net = get_net()
+    train_ls, _ = train(net, train_features, train_labels, None, None,
+                        num_epochs, lr, weight_decay, batch_size)
+    plt.semilogy(range(1, num_epochs + 1), train_ls)
+    plt.xlabel('epochs')
+    plt.ylabel('rmse')
+    plt.show()
+    print('train rmse %f' % train_ls[-1])
+    preds = net(test_features).asnumpy()
+    test_data['SalePrice'] = pd.Series(preds.reshape(1, -1)[0])
+    submission = pd.concat([test_data['Id'], test_data['SalePrice']], axis=1)
+    submission.to_csv('submission.csv', index=False)
+
+
+train_and_pred(train_features, test_features, train_labels, test_data,
+               num_epochs, lr, weight_decay, batch_size)
